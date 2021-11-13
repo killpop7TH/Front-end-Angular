@@ -1,0 +1,333 @@
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+<!--nav-->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Inventario</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#"></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled"></a>
+        </li>
+      </ul>
+      <form class="d-flex ml-auto">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container" id="main-container">
+  <div class="row justify-content-center">
+    <div class="col-12 col-sm-8 col-lg-6">
+      <!-- Section Heading-->
+      <div class="section_heading text-center wow fadeInUp" data-wow-delay="0.2s" style="
+          visibility: visible;
+          animation-delay: 0.2s;
+          animation-name: fadeInUp;
+        ">
+        <h3>Productos <span> disponibles</span></h3>
+        <p>
+          Selecciona una taza existente o
+          <a class="btn btn-info btn-2" (click)="onOpenModal(null, 'add')">Agregar nueva Taza</a>
+        </p>
+        <div class="line"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Display all -->
+  <div class="row justify-content-center">
+    <!-- Single Advisor-->
+    <div *ngFor="let taza of tazas" class="col-12 col-sm-6 col-lg-3">
+      <div class="single_advisor_profile wow fadeInUp" data-wow-delay="0.2s" style="
+          visibility: visible;
+          animation-delay: 0.2s;
+          animation-name: fadeInUp;
+        ">
+        <!-- Team Thumb-->
+        <div class="advisor_thumb">
+          <img src="../assets/img/taza.png" alt="loading" style="width:250px;height:200px;" />
+          <!-- Social Info-->
+
+        </div>
+        <!-- Listado todo-->
+
+        <div class="single_advisor_details_info">
+          <h6>Taza calidad: {{ taza?.calidad }}</h6>
+          <!-- 
+            code if DB normalization & switching between Id
+            <p *ngIf="taza?.calidad=='alta'; else menor">1</p>
+          <ng-template #menor>
+            <p>2</p>
+          </ng-template> -->
+          <p class="designation">Color: {{ taza?.color }}</p>
+          <p class="designation">Dimensiones: {{ taza?.dimensiones }}</p>
+          <p class="designation">Capacidad: {{ taza?.capacidad }}</p>
+          <p class="designation">Modelo: {{ taza?.modelo }}</p>
+          <p class="designation">Material: {{ taza?.material }}</p>
+          <br>
+          <h6 class="designation">Stock: {{ taza?.stock }}</h6>
+          <br>
+          <div class="row justify-content-center">
+            <div class="button">
+              <a (click)="onOpenModal(taza, 'edit')" class="btn btn-success btn-sm" href="#">+ Stock</a>
+            </div>
+
+            <div class="button">
+              <a (click)="onOpenModal(taza, 'edit2')" class="btn btn-warning btn-sm" href="#">- Stock</a>
+            </div>
+
+          </div>
+          <div class="row justify-content-center"><br></div>
+          <div class="row justify-content-center">
+            <div class="button">
+              <a (click)="onOpenModal(taza, 'delete')" class="btn btn-danger btn-sm">Eliminar producto</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal eleminar -->
+  <div class="modal fade" id="deleteTazaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">DELETE</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>¿Seguro que quieres eliminar las tazas id: {{deleteTaza?.id}} ?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Cancelar
+          </button>
+          <button (click)="onDeleteTaza(deleteTaza?.id)" type="button" class="btn btn-primary">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal actualizar-->
+  <div class="modal fade" id="updateTazaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateModal">Actualizar taza id: {{editTaza?.id}} </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #editForm="ngForm">
+            <div class="form-group">
+              <label for="calidad"> calidad:</label>
+              <input ngModel="{{editTaza?.calidad}}" type="text" name="calidad" class="form-control" id="calidad"
+                required readonly>
+            </div>
+            <input hidden ngModel="{{editTaza?.id}}" type="text" name="id" class="form-control" id="id" required
+              readonly>
+            <div class="form-group">
+              <label for="color"> color:</label>
+              <input ngModel="{{editTaza?.color}}" type="text" name="color" class="form-control" id="color" required
+                readonly>
+            </div>
+            <div class="form-group">
+              <label for="dimensiones"> dimensiones:</label>
+              <input ngModel="{{editTaza?.dimensiones}}" type="text" name="dimensiones" class="form-control"
+                id="dimensiones" required readonly>
+            </div>
+            <div class="form-group">
+              <label for="capacidad"> capacidad:</label>
+              <input ngModel="{{editTaza?.capacidad}}" type="text" name="capacidad" class="form-control" id="capacidad"
+                required readonly>
+            </div>
+            <div class="form-group">
+              <label hidden for="modelo"> modelo:</label>
+              <input hidden ngModel="{{editTaza?.modelo}}" type="text" name="modelo" class="form-control" id="modelo"
+                required readonly>
+            </div>
+            <div class="form-group">
+              <label hidden for="material"> material:</label>
+              <input hidden ngModel="{{editTaza?.material}}" type="text" name="material" class="form-control"
+                id="material" required readonly>
+            </div>
+
+            <div class="form-group">
+              <label for="stock">#stock:</label>
+              <input ngModel="{{editTaza?.stock}}" type="text" name="stock" class="form-control" id="stock" required
+                readonly>
+            </div>
+            <div class="form-group">
+              <label for="newStock"># Stock a agregar:</label>
+              <input type="number" name="newStock" class="form-control" id="newStock" required>
+            </div>
+
+            <div class="modal-footer">
+              <button id="close-btn-updateModal" type="button" class="btn btn-secondary"
+                data-dismiss="modal">Close</button>
+              <button (click)="onUpdateTaza(editForm.value)" data-dismiss="modal" class="btn btn-primary">Save
+                changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal actualizar 2 to subtract-->
+  <div class="modal fade" id="updateTazaModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateModal">Actualizar Stock - taza id: {{editTaza?.id}} </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #editForm2="ngForm">
+            <div class="form-group">
+              <label for="calidad"> calidad:</label>
+              <input ngModel="{{editTaza?.calidad}}" type="text" name="calidad" class="form-control" id="calidad"
+                required readonly>
+            </div>
+            <input hidden ngModel="{{editTaza?.id}}" type="text" name="id" class="form-control" id="id" required
+              readonly>
+            <div class="form-group">
+              <label for="color"> color:</label>
+              <input ngModel="{{editTaza?.color}}" type="text" name="color" class="form-control" id="color" required
+                readonly>
+            </div>
+            <div class="form-group">
+              <label for="dimensiones"> dimensiones:</label>
+              <input ngModel="{{editTaza?.dimensiones}}" type="text" name="dimensiones" class="form-control"
+                id="dimensiones" required readonly>
+            </div>
+            <div class="form-group">
+              <label for="capacidad"> capacidad:</label>
+              <input ngModel="{{editTaza?.capacidad}}" type="text" name="capacidad" class="form-control" id="capacidad"
+                required readonly>
+            </div>
+            <div class="form-group">
+              <label hidden for="modelo"> modelo:</label>
+              <input hidden ngModel="{{editTaza?.modelo}}" type="text" name="modelo" class="form-control" id="modelo"
+                required readonly>
+            </div>
+            <div class="form-group">
+              <label hidden for="material"> material:</label>
+              <input hidden ngModel="{{editTaza?.material}}" type="text" name="material" class="form-control"
+                id="material" required readonly>
+            </div>
+
+            <div class="form-group">
+              <label for="stock">#stock:</label>
+              <input ngModel="{{editTaza?.stock}}" type="text" name="stock" class="form-control" id="stock" required
+                readonly>
+            </div>
+            <div class="form-group">
+              <label for="newStock2"># Stock a retirar: </label>
+              <input type="number" name="newStock2" class="form-control" id="newStock2" required>
+            </div>
+            <p style="color:blue">*Retira 10 tazas de BAJA calidad y se regalarán 2 tazas de baja calidad(solo disponible en compras de Taza BAJA Calidad)</p>
+            <p style="color:red">*Promoción para tazas ALTA calidad proximamente!</p>
+            <div class="modal-footer">
+              <button id="close-btn-updateModal" type="button" class="btn btn-secondary"
+                data-dismiss="modal">Close</button>
+              <button  (click)="onUpdateTaza2(editForm2.value)" data-dismiss="modal" class="btn btn-primary">Save
+                changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal agregar-->
+  <div class="modal fade" id="addTazaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Agregar Tazas</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #addForm="ngForm" (ngSubmit)="onAddTaza(addForm)">
+            <div class="form-group">
+              <label for="calidad">Selecciona calidad:</label>
+              <select ngModel name="calidad" id="calidad" class="form-control" required>
+                <option value="alta">Alta</option>
+                <option value="baja">Baja</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="color">Selecciona color:</label>
+              <select ngModel name="color" id="color" class="form-control" required>
+                <option value="roja">Rojo</option>
+                <option value="azul">Azul</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="dimensiones">Selecciona dimensiones:</label>
+              <select ngModel name="dimensiones" id="dimensiones" class="form-control" required>
+                <option value="10x10x5">10x10x5</option>
+                <option value="15x15x10">15x15x10</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="capacidad">Selecciona capacidad:</label>
+              <select ngModel name="capacidad" id="capacidad" class="form-control" required>
+                <option value="500ml">500ml</option>
+                <option value="750ml">750ml</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="modelo">Selecciona modelo:</label>
+              <select ngModel name="modelo" id="modelo" class="form-control" required>
+                <option value="Mod01">Mod01</option>
+                <option value="Mod02">Mod02</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="material">Selecciona material:</label>
+              <select ngModel name="material" id="material" class="form-control" required>
+                <option value="mat01">mat01</option>
+                <option value="mat02">mat02</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="stock"># stock:</label>
+              <input ngModel type="number" name="stock" class="form-control" id="stock" required>
+            </div>
+            <div class="modal-footer">
+              <button id="close-btn" type="button" class="btn btn-secondary" data-dismiss="modal">
+                Close
+              </button>
+              <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
